@@ -1,6 +1,5 @@
 ﻿{
-  "server": "irc.chat.twitch.tv",
-  "port": 6667,
   "nick": "",
-  "password": ""
+  "password": "",
+  "clientid": ""
 }

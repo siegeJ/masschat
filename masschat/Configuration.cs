@@ -13,10 +13,9 @@ namespace masschat
 
         private static Configuration instance;
 
-        public string Server { get; }
-        public int Port { get; }
         public string Nick { get; }
         public string Password { get; }
+        public string ClientId { get; }
 
         public static Configuration Instance
         {
@@ -39,10 +38,9 @@ namespace masschat
 
             AppSettingsConfig = builder.Build();
 
-            Server = AppSettingsConfig["server"];
-            Port = Int32.Parse(AppSettingsConfig["port"]);
             Nick = AppSettingsConfig["nick"];
             Password = AppSettingsConfig["password"];
+            ClientId = AppSettingsConfig["clientid"];
 
         }
 

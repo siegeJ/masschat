@@ -1,6 +1,9 @@
 ﻿using System;
-using System.IO;
-using Microsoft.Extensions.Configuration;
+using TwitchLib;
+using TwitchLib.Models.Client;
+using TwitchLib.Events.Client;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace masschat
 {
@@ -11,12 +14,18 @@ namespace masschat
         {
 
             Console.WriteLine($"MASS CHAT");
-            Console.WriteLine($"Server: {Configuration.Instance.Server}:{Configuration.Instance.Port}");
             Console.WriteLine($"Nick: {Configuration.Instance.Nick}");
+    
+            ChannelHandler channelhandler = new ChannelHandler(Configuration.Instance.ClientId);
+            ChatHandler chatHandler = new ChatHandler(Configuration.Instance.Nick, Configuration.Instance.Password, channelhandler);
 
+            var task = Task.Run(() => chatHandler.JoinAllChannels().ConfigureAwait(false));
 
-            Console.ReadLine();
-
+            while(true)
+            {
+                Console.WriteLine($"we be waiting");
+                Thread.Sleep(5000);
+            }
         }
 
     }
