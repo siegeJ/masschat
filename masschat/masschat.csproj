@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Settings\appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Folder Include="Enums\" />
   </ItemGroup>
 
 </Project>

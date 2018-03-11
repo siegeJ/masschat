@@ -9,7 +9,13 @@ using TwitchLib.Models.API.v3.Streams;
 
 namespace masschat
 {
-    public class ChannelHandler
+
+    public interface IChannelHandler
+    {
+        Task<IList<Stream>> GetStreams();
+    }
+
+    public class ChannelHandler : IChannelHandler
     {
         private static TwitchAPI api;
         private string clientId;
@@ -24,7 +30,7 @@ namespace masschat
         public async Task<bool> PopulateChannels()
         {
             api = new TwitchAPI(clientId);
-            var livestreams = await api.Streams.v3.GetStreamsAsync(null, null, 10, 0, clientId, TwitchLib.Enums.StreamType.Live);
+            var livestreams = await api.Streams.v3.GetStreamsAsync(null, null, 50, 0, clientId, TwitchLib.Enums.StreamType.Live);
 
             streams.Clear();
             streams.AddRange(livestreams.Streams);

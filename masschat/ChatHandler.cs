@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using masschat.Models;
 using TwitchLib;
 using TwitchLib.Events.Client;
 using TwitchLib.Models.Client;
@@ -9,17 +10,33 @@ namespace masschat
 {
     public class ChatHandler
     {
-        private IList<TwitchClient> clients;
-        private ConnectionCredentials credentials;
-        private ChannelHandler channelHandler;
+        private IList<TwitchClient> _clients;
+        private readonly ConnectionCredentials _credentials;
+        private readonly IChannelHandler _channelHandler;
+        private int _messagesProcessed = 0;
 
-        public ChatHandler(string nick, string password, ChannelHandler channelHandler)
+        public IList<IMessageHandler> MessageHandlers { get; set; }
+
+        /// <summary>
+        /// Reads messages from chat then filters them
+        /// </summary>
+        /// <param name="nick">irc nick</param>
+        /// <param name="password">irc password</param>
+        /// <param name="channelHandler">channel handler that gets channels</param>
+        /// <param name="messageHandlers">If not supplied a defualt list of message handlers will be provided</param>
+        public ChatHandler(string nick, string password, IChannelHandler channelHandler, IList<IMessageHandler> messageHandlers = null)
         {
-            credentials = new ConnectionCredentials(nick, password);
-            clients = new List<TwitchClient>();
-            this.channelHandler = channelHandler;
-
-
+            _credentials = new ConnectionCredentials(nick, password);
+            _clients = new List<TwitchClient>();
+            this._channelHandler = channelHandler;
+            if (messageHandlers != null)
+            {
+                MessageHandlers = messageHandlers;
+            }
+            else
+            {
+                MessageHandlers = new List<IMessageHandler> {new KappaMessageHandler()};
+            }
         }
 
         /// <summary>
@@ -29,14 +46,16 @@ namespace masschat
         public async Task<bool> JoinAllChannels()
         {
 
-            var streams = await channelHandler.GetStreams();
+            var streams = _channelHandler.GetStreams().ConfigureAwait(false);
 
-            foreach (var stream in streams)
+            var client = new TwitchClient(_credentials);
+            client.OnJoinedChannel += onJoinedChannel;
+            client.OnMessageReceived += onMessageReceived;
+            client.Connect();
+
+            foreach (var stream in await streams)
             {
-                var client = new TwitchClient(credentials, stream.Channel.Name);
-                client.OnJoinedChannel += onJoinedChannel;
-                client.OnMessageReceived += onMessageReceived;
-                client.Connect();
+                client.JoinChannel(stream.Channel.Name);
             }
 
             return true;
@@ -50,7 +69,28 @@ namespace masschat
 
         private void onMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            Console.WriteLine(e.ChatMessage.Message);
+            try
+            {
+                _messagesProcessed++;
+
+                foreach (var messageHandler in MessageHandlers)
+                {
+                    if (messageHandler.Handle(e.ChatMessage))
+                    {
+                        Console.WriteLine(e.ChatMessage.Message);
+                    }
+                }
+
+                if (_messagesProcessed % 100 == 0)
+                {
+                    Console.WriteLine(_messagesProcessed + " messages processed.");
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("WAT HAPPENED??" + exception.StackTrace);
+            }
+
         }
 
     }
