@@ -4,6 +4,7 @@ using System.Text;
 
 namespace masschat.Models
 {
+
     public class Token
     {
         private readonly ITokenChecker _checker;
@@ -23,7 +24,7 @@ namespace masschat.Models
 
     public interface ITokenChecker
     {
-        bool CaseSensitive { get; }
+        //Return true if token is found in message
         bool Check(string message, string token);
     }
 

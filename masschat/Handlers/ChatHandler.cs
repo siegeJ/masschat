@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using masschat.Handlers;
 using masschat.Models;
 using TwitchLib;
 using TwitchLib.Events.Client;
@@ -15,7 +17,18 @@ namespace masschat
         private readonly IChannelHandler _channelHandler;
         private int _messagesProcessed = 0;
 
-        public IList<IMessageHandler> MessageHandlers { get; set; }
+        public List<IMessageHandler> MessageHandlers { get; set; }
+
+        public List<AverageTokensMessageHandler> AverageTokensMessageHandlers
+        {
+            get
+            {
+                var averagehandlers = MessageHandlers
+                    .OfType<AverageTokensMessageHandler>().ToList();
+
+                return averagehandlers;
+            }
+        }
 
         /// <summary>
         /// Reads messages from chat then filters them
@@ -29,14 +42,11 @@ namespace masschat
             _credentials = new ConnectionCredentials(nick, password);
             _clients = new List<TwitchClient>();
             this._channelHandler = channelHandler;
+
+            MessageHandlers = new List<IMessageHandler> { new KappaAverageTokensMessageHandler(), new LolAverageTokensMessageHandler() };
+            
             if (messageHandlers != null)
-            {
-                MessageHandlers = messageHandlers;
-            }
-            else
-            {
-                MessageHandlers = new List<IMessageHandler> {new KappaMessageHandler()};
-            }
+                MessageHandlers.AddRange(messageHandlers);
         }
 
         /// <summary>
@@ -77,11 +87,11 @@ namespace masschat
                 {
                     if (messageHandler.Handle(e.ChatMessage))
                     {
-                        Console.WriteLine(e.ChatMessage.Message);
+                        //Console.WriteLine(e.ChatMessage.Message);
                     }
                 }
 
-                if (_messagesProcessed % 100 == 0)
+                if (_messagesProcessed % 250 == 0)
                 {
                     Console.WriteLine(_messagesProcessed + " messages processed.");
                 }

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TwitchLib;
 using TwitchLib.Models.API.v3.Streams;
 
-
-namespace masschat
+namespace masschat.Handlers
 {
 
     public interface IChannelHandler
