@@ -28,25 +28,48 @@ namespace Example
 
             var clientid = "";
             var nick = "";
-            var password = "";
+            var password = "oauth:";
 
             Console.WriteLine($"MASS CHAT");
-            ChannelHandler channelhandler = new ChannelHandler(clientid);
+            ChannelHandler channelhandler = new ChannelHandler(clientid, 1);
             ChatHandler chatHandler = new ChatHandler(nick, password, channelhandler);
-            Task.Run(() => chatHandler.JoinAllChannels().ConfigureAwait(false));
 
             Task.Run(() =>
             {
                 while (true)
                 {
-                    var stuff = chatHandler.AverageTokensMessageHandlers;
-
-                    foreach (var channels in stuff.SelectMany(c => c.Channels))
+                    try
                     {
-                        Console.WriteLine($"Average messages per minute of handler name {channels.Value.HandlerName.ToString()} in channel {channels.Key} is {channels.Value.AveragePerMinuteAllTime}");
-                    }
 
-                    Thread.Sleep(5000);
+                        var stuff = chatHandler.AverageTokensMessageHandlers;
+
+                        foreach (var channel in stuff.SelectMany(c => c.Channels))
+                        {
+                            var count30 = channel.Value.CountLast(30);
+
+                            if ((count30 > (channel.Value.AveragePerMinuteAllTime * 3)) &&
+                                channel.Value.AveragePerMinuteAllTime > 0)
+                            {
+                                Console.WriteLine(
+                                    $" {channel.Value.HandlerName.ToString()} average in channel {channel.Key} is {channel.Value.AveragePerMinuteAllTime} Per minute");
+                                Console.WriteLine($"Last 30 seconds was {count30}");
+
+                                var streams = channelhandler.GetStreams().ConfigureAwait(false).GetAwaiter()
+                                    .GetResult();
+
+                                Console.WriteLine(streams.ContainsKey(channel.Key)
+                                    ? $"Number of viewers is {streams[channel.Key].Viewers}"
+                                    : $"{channel.Key} not found");
+                            }
+                        }
+
+                        Thread.Sleep(10000);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.StackTrace);
+     
+                    }
                 }
             });
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using masschat.Enums;
 
 namespace masschat.Models
@@ -11,7 +13,19 @@ namespace masschat.Models
 
         public DateTime StartDate { get; set; }
 
-        public int MessageCount { get; set; }
+        private int messageCount;
+        public int MessageCount
+        {
+            get => messageCount;
+            set
+            {
+                //Remove if older than 3 minutes
+                MessageDates.ToList().RemoveAll(m => m < DateTime.UtcNow.AddMinutes(-3));
+
+                MessageDates.Add(DateTime.UtcNow);
+                this.messageCount = value;
+            }
+        }
 
         public double AveragePerMinuteAllTime
         {
@@ -30,9 +44,22 @@ namespace masschat.Models
             }
         }
 
-        public AverageTokensChannelInfo()
+        public double CountLast(int seconds)
         {
 
+            var end = DateTime.UtcNow;
+            var start = DateTime.UtcNow.AddSeconds(-seconds);
+
+            return MessageDates.Count(md => md > start && md < end);
+            
+        }
+
+
+        public IList<DateTime> MessageDates { get; set; }
+
+        public AverageTokensChannelInfo()
+        {
+            MessageDates = new List<DateTime>();
         }
 
     }

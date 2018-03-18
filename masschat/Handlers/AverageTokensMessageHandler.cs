@@ -37,7 +37,7 @@ namespace masschat.Handlers
 
                     if (Channels.ContainsKey(message.Channel))
                     {
-                        Channels[message.Channel].MessageCount++;
+                        Channels[message.Channel].MessageCount = Channels[message.Channel].MessageCount + 1;
                     }
                     else
                     {
@@ -69,12 +69,28 @@ namespace masschat.Handlers
         public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.Kappa;
     }
 
+    public class PogChampAverageTokensMessageHandler : AverageTokensMessageHandler
+    {
+        public override IList<Token> Tokens => new List<Token>()
+        {
+            new Token(new WordTokenChecker(), "PogChamp" ),
+            new Token(new WordTokenChecker(), "Wow" ),
+            new Token(new ContainsTokenChecker(), "POGGERS" ),
+            new Token(new WordTokenChecker(), "MLG" )
+        };
+
+        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.Kappa;
+    }
+
     public class LolAverageTokensMessageHandler : AverageTokensMessageHandler
     {
         public override IList<Token> Tokens => new List<Token>()
         {
             new Token(new WordTokenChecker(), "LOL" ),
             new Token(new WordTokenChecker(), "LUL" ),
+            new Token(new ContainsTokenChecker(), "LUL" ),
+            new Token(new ContainsTokenChecker(), "HAHA" ),
+            new Token(new ContainsTokenChecker(), "LMFAO" ),
             new Token(new WordTokenChecker(), "OMEGALUL" ),
 
         };

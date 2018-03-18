@@ -29,7 +29,7 @@ namespace masschat.Models
     }
 
     /// <summary>
-    /// Message must contain the token as a word surrounded by spaces ie: ("blabla token blalba")
+    /// Message must contain the token as a word surrounded by spaces ie: ("blabla token blalba") or start with or end with the word
     /// </summary>
     public class WordTokenChecker : ITokenChecker
     {
@@ -41,13 +41,13 @@ namespace masschat.Models
 
         public bool Check(string message, string token)
         {
-            return message.Contains(" " + token + " ");
+            return message.Contains(" " + token + " ") || message.StartsWith(token + " ") || message.EndsWith(" " + token);
         }
 
     }
 
     /// <summary>
-    /// Message must contain the token as a word surrounded by spaces ie: ("blabla token blalba")
+    /// Message must contain the token ("blablatokenblalba")
     /// </summary>
     public class ContainsTokenChecker : ITokenChecker
     {
@@ -71,7 +71,7 @@ namespace masschat.Models
     }
 
     /// <summary>
-    /// Message must contain the token as a word surrounded by spaces ie: ("blabla token blalba")
+    /// Message must exacly match 
     /// </summary>
     public class ExactlyTokenChecker : ITokenChecker
     {
@@ -119,7 +119,7 @@ namespace masschat.Models
     }
 
     /// <summary>
-    /// Message must start with the token
+    /// Message must end with the token
     /// </summary>
     public class EndsWith : ITokenChecker
     {
