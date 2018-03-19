@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
@@ -79,7 +80,7 @@ namespace masschat.Handlers
             new Token(new WordTokenChecker(), "MLG" )
         };
 
-        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.Kappa;
+        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.PogChamp;
     }
 
     public class LolAverageTokensMessageHandler : AverageTokensMessageHandler

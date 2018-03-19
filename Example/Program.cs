@@ -1,10 +1,14 @@
 ﻿using masschat;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using masschat.Handlers;
 
 namespace Example
@@ -16,6 +20,14 @@ namespace Example
         private const uint ENABLE_EXTENDED_FLAGS = 0x0080;
         static ManualResetEvent _quitEvent = new ManualResetEvent(false);
 
+        private static List<string> recentClipChannels;
+
+        static void ClearRecentClipChannels()
+        {
+            Console.WriteLine("Clearing recent clip channels");
+            recentClipChannels.Clear();
+        }
+
         static void Main(string[] args)
         {
             IntPtr handle = Process.GetCurrentProcess().MainWindowHandle;
@@ -26,59 +38,75 @@ namespace Example
                 eArgs.Cancel = true;
             };
 
+            System.Timers.Timer cleartimer = new System.Timers.Timer(30000);
+            cleartimer.Elapsed += (sender, stuff) => ClearRecentClipChannels();
+            cleartimer.Start();
+
+
             var clientid = "";
             var nick = "";
             var password = "oauth:";
+            var accessToken = "";
+
+            recentClipChannels = new List<string>();
 
             Console.WriteLine($"MASS CHAT");
-            ChannelHandler channelhandler = new ChannelHandler(clientid, 1);
+            ChannelHandler channelhandler = new ChannelHandler(clientid, accessToken);
             ChatHandler chatHandler = new ChatHandler(nick, password, channelhandler);
 
-            Task.Run(() =>
+
+
+            while (true)
             {
-                while (true)
+                try
                 {
-                    try
+
+                    var stuff = chatHandler.AverageTokensMessageHandlers;
+
+                    foreach (var channel in stuff.SelectMany(c => c.Channels).ToList())
                     {
+                        var count30 = channel.Value.CountLast(30);
 
-                        var stuff = chatHandler.AverageTokensMessageHandlers;
-
-                        foreach (var channel in stuff.SelectMany(c => c.Channels))
+                        if ((count30 > (channel.Value.AveragePerMinuteAllTime * 3)) &&
+                            channel.Value.AveragePerMinuteAllTime > 0)
                         {
-                            var count30 = channel.Value.CountLast(30);
+                            //Console.WriteLine(
+                            //    $" {channel.Value.HandlerName.ToString()} handler average in channel {channel.Key} is {channel.Value.AveragePerMinuteAllTime} Per minute");
+                            //Console.WriteLine($"Last 30 seconds was {count30}");
 
-                            if ((count30 > (channel.Value.AveragePerMinuteAllTime * 3)) &&
-                                channel.Value.AveragePerMinuteAllTime > 0)
+                            var streams = channelhandler.GetStreams().ConfigureAwait(false).GetAwaiter()
+                                .GetResult();
+
+                            if (streams.ContainsKey(channel.Key) && !recentClipChannels.Contains(channel.Key))
                             {
-                                Console.WriteLine(
-                                    $" {channel.Value.HandlerName.ToString()} average in channel {channel.Key} is {channel.Value.AveragePerMinuteAllTime} Per minute");
-                                Console.WriteLine($"Last 30 seconds was {count30}");
-
-                                var streams = channelhandler.GetStreams().ConfigureAwait(false).GetAwaiter()
+                                var id = streams[channel.Key].Channel.Id;
+                                var clip = channelhandler.CreateClip(id).ConfigureAwait(false).GetAwaiter()
                                     .GetResult();
 
-                                Console.WriteLine(streams.ContainsKey(channel.Key)
-                                    ? $"Number of viewers is {streams[channel.Key].Viewers}"
-                                    : $"{channel.Key} not found");
+                                recentClipChannels.Add(channel.Key);
+
+                                foreach (var coolBean in clip.CreatedClips)
+                                {
+                                    Console.WriteLine("--------------");
+                                    Console.WriteLine(coolBean.Id);
+                                    Console.WriteLine("--------------");
+                                }
                             }
+
                         }
+                    }
 
-                        Thread.Sleep(10000);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.StackTrace);
-     
-                    }
+                    Thread.Sleep(1000);
                 }
-            });
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.StackTrace);
 
-           
+                }
+            }
 
-            //chatHandler.MessageHandlers[0].
 
-    
-            _quitEvent.WaitOne();
+
         }
     }
 }

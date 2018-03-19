@@ -79,13 +79,14 @@ namespace masschat.Handlers
                     Console.WriteLine($"Refreshing IRC Channels");
                 }
 
-                var streams = await _channelHandler.GetStreams();
-                var joinedChannels = client.JoinedChannels;
+                var streams = (await _channelHandler.GetStreams()).ToList();
+                var joinedChannels = client.JoinedChannels.ToList();
                 foreach (var stream in streams)
                 {
                     //join if not in already
                     if (!joinedChannels.Select(j => j.Channel).Contains(stream.Value.Channel.Name))
                     {
+                        Console.WriteLine("Joined " + stream.Value.Channel.Name);
                         client.JoinChannel(stream.Value.Channel.Name);
                     }
                 }
