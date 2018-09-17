@@ -29,7 +29,7 @@ namespace masschat.Handlers
             Channels = new ConcurrentDictionary<string, AverageTokensChannelInfo>();
         }
 
-        public virtual bool Handle(ChatMessage message)
+        public virtual void Handle(ChatMessage message)
         {
             foreach (var token in Tokens)
             {
@@ -50,11 +50,10 @@ namespace masschat.Handlers
                             StartDate = DateTime.UtcNow
                         });
                     }
-                    return true;
+
                 }
             }
 
-            return false;
         }
     }
 

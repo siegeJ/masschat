@@ -10,8 +10,7 @@ namespace masschat.Handlers
 {
     public interface IMessageHandler
     {
-        IList<Token> Tokens { get; }
-        bool Handle(ChatMessage message);
+        void Handle(ChatMessage message);
     }
 
 }

@@ -10,9 +10,24 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using masschat.Handlers;
+using masschat.Models;
+using TwitchLib.Client.Models;
 
 namespace Example
 {
+    public class ExampleMessageHandler : IMessageHandler
+    {
+        private string toFind => "My first IMessageHandler!";
+
+        public void Handle(ChatMessage message)
+        {
+            if (message.Message.Contains(toFind))
+            {
+                Console.WriteLine($"We found it in {message.Channel}, thanks {message.Username}: {message.Message}");
+            }
+        }
+    }
+
     class Program
     {
         [DllImport("kernel32.dll")]
@@ -41,6 +56,7 @@ namespace Example
             System.Timers.Timer cleartimer = new System.Timers.Timer(60000);
             cleartimer.Elapsed += (sender, stuff) => ClearRecentClipChannels();
             cleartimer.Start();
+            Console.WriteLine($"MASS CHAT");
 
 
             var clientid = "";
@@ -48,13 +64,13 @@ namespace Example
             var password = "oauth:";
             var accessToken = "";
 
-            recentClipChannels = new List<string>();
+            var exampleHandler = new ExampleMessageHandler();
 
-            Console.WriteLine($"MASS CHAT");
             ChannelHandler channelhandler = new ChannelHandler(clientid, accessToken, 5);
-            ChatHandler chatHandler = new ChatHandler(nick, password, channelhandler);
+            ChatHandler chatHandler = new ChatHandler(nick, password, channelhandler, new IMessageHandler[] {exampleHandler});
 
 
+            recentClipChannels = new List<string>();
 
             while (true)
             {

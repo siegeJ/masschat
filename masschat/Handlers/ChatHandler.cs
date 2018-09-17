@@ -137,10 +137,7 @@ namespace masschat.Handlers
 
                 foreach (var messageHandler in MessageHandlers)
                 {
-                    if (messageHandler.Handle(e.ChatMessage))
-                    {
-                        //Console.WriteLine(e.ChatMessage.Message);
-                    }
+                    messageHandler.Handle(e.ChatMessage);
                 }
 
                 if (_messagesProcessed % 1000 == 0)
