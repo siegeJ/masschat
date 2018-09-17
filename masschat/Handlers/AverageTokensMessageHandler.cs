@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using masschat.Enums;
 using masschat.Models;
-using TwitchLib.Models.Client;
+using TwitchLib.Client.Models;
 
 namespace masschat.Handlers
 {
@@ -77,7 +77,8 @@ namespace masschat.Handlers
             new Token(new WordTokenChecker(), "PogChamp" ),
             new Token(new WordTokenChecker(), "Wow" ),
             new Token(new ContainsTokenChecker(), "POGGERS" ),
-            new Token(new WordTokenChecker(), "MLG" )
+            new Token(new WordTokenChecker(), "MLG" ),
+            new Token(new WordTokenChecker(), "POG" ),
         };
 
         public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.PogChamp;

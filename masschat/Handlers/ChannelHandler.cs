@@ -5,8 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using TwitchLib;
-using TwitchLib.Models.API.Helix.Clips.CreateClip;
-using TwitchLib.Models.API.v3.Streams;
+using TwitchLib.Api;
+using TwitchLib.Api.Models.Helix.Clips.CreateClip;
+using TwitchLib.Api.Models.v5.Streams;
 
 namespace masschat.Handlers
 {
@@ -39,12 +40,20 @@ namespace masschat.Handlers
         public async Task<bool> PopulateChannels()
         {
             Console.WriteLine($"Getting Channels From Twitch");
-            api = new TwitchAPI(clientId, accessToken);
-            var livestreams = await api.Streams.v3.GetStreamsAsync(null, null, 100, 0, clientId, TwitchLib.Enums.StreamType.Live);
+            api = new TwitchAPI();
+            api.Settings.ClientId = clientId;
+            api.Settings.AccessToken = accessToken;
+            var livestreams = await api.Streams.v5.GetLiveStreamsAsync(null, null, null, null, 100, 0);
+            var livestreams2 = await api.Streams.v5.GetLiveStreamsAsync(null, null, null, null, 100, 100);
+            var livestreams3 = await api.Streams.v5.GetLiveStreamsAsync(null, null, null, null, 100, 200);
 
             streams.Clear();
 
-            foreach (var livestream in livestreams.Streams)
+            var allStreams = livestreams.Streams.ToList();
+            allStreams.AddRange(livestreams2.Streams);
+            allStreams.AddRange(livestreams3.Streams);
+
+            foreach (var livestream in allStreams)
             {
                 streams.TryAdd(livestream.Channel.Name, livestream);
             }

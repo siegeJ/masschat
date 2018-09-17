@@ -38,7 +38,7 @@ namespace Example
                 eArgs.Cancel = true;
             };
 
-            System.Timers.Timer cleartimer = new System.Timers.Timer(30000);
+            System.Timers.Timer cleartimer = new System.Timers.Timer(60000);
             cleartimer.Elapsed += (sender, stuff) => ClearRecentClipChannels();
             cleartimer.Start();
 
@@ -51,7 +51,7 @@ namespace Example
             recentClipChannels = new List<string>();
 
             Console.WriteLine($"MASS CHAT");
-            ChannelHandler channelhandler = new ChannelHandler(clientid, accessToken);
+            ChannelHandler channelhandler = new ChannelHandler(clientid, accessToken, 5);
             ChatHandler chatHandler = new ChatHandler(nick, password, channelhandler);
 
 
@@ -61,18 +61,17 @@ namespace Example
                 try
                 {
 
-                    var stuff = chatHandler.AverageTokensMessageHandlers;
+                    var messageHandlers = chatHandler.AverageTokensMessageHandlers;
+                    var channels = messageHandlers.SelectMany(c => c.Channels).ToList();
 
-                    foreach (var channel in stuff.SelectMany(c => c.Channels).ToList())
+                    foreach (var channel in channels)
                     {
                         var count30 = channel.Value.CountLast(30);
 
+
                         if ((count30 > (channel.Value.AveragePerMinuteAllTime * 3)) &&
-                            channel.Value.AveragePerMinuteAllTime > 0)
+                            channel.Value.AveragePerMinuteAllTime > 2)
                         {
-                            //Console.WriteLine(
-                            //    $" {channel.Value.HandlerName.ToString()} handler average in channel {channel.Key} is {channel.Value.AveragePerMinuteAllTime} Per minute");
-                            //Console.WriteLine($"Last 30 seconds was {count30}");
 
                             var streams = channelhandler.GetStreams().ConfigureAwait(false).GetAwaiter()
                                 .GetResult();
@@ -80,15 +79,17 @@ namespace Example
                             if (streams.ContainsKey(channel.Key) && !recentClipChannels.Contains(channel.Key))
                             {
                                 var id = streams[channel.Key].Channel.Id;
-                                var clip = channelhandler.CreateClip(id).ConfigureAwait(false).GetAwaiter()
-                                    .GetResult();
+                                Console.WriteLine($"Clip being created in {channel.Key} for {channel.Value.HandlerName}: Last 30: {count30}. Average: {channel.Value.AveragePerMinuteAllTime}");
+
+                                var createdClips = channelhandler.CreateClip(id).ConfigureAwait(false).GetAwaiter()
+                                    .GetResult().CreatedClips;
 
                                 recentClipChannels.Add(channel.Key);
 
-                                foreach (var coolBean in clip.CreatedClips)
+                                foreach (var clip in createdClips)
                                 {
                                     Console.WriteLine("--------------");
-                                    Console.WriteLine(coolBean.Id);
+                                    Console.WriteLine(clip.Id);
                                     Console.WriteLine("--------------");
                                 }
                             }

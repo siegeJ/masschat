@@ -4,8 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using TwitchLib;
-using TwitchLib.Events.Client;
-using TwitchLib.Models.Client;
+using TwitchLib.Client;
+using TwitchLib.Client.Events;
+using TwitchLib.Client.Models;
 
 namespace masschat.Handlers
 {
@@ -41,14 +42,14 @@ namespace masschat.Handlers
             _credentials = new ConnectionCredentials(nick, password);
             this._channelHandler = channelHandler;
 
-            MessageHandlers = new List<IMessageHandler> { new KappaAverageTokensMessageHandler(), new LolAverageTokensMessageHandler() };
+            MessageHandlers = new List<IMessageHandler> { new KappaAverageTokensMessageHandler(), new LolAverageTokensMessageHandler(), new PogChampAverageTokensMessageHandler() };
             
             if (messageHandlers != null)
                 MessageHandlers.AddRange(messageHandlers);
 
             Start();
 
-            var channelRefreshTimer = new Timer(TimeSpan.FromMinutes(1).TotalMilliseconds);
+            var channelRefreshTimer = new Timer(TimeSpan.FromMinutes(5).TotalMilliseconds);
             channelRefreshTimer.Elapsed += async (sender, args) => await JoinAllChannels();
             channelRefreshTimer.Start();
         }
@@ -69,7 +70,8 @@ namespace masschat.Handlers
 
                 if (client == null || !client.IsConnected)
                 {
-                    client = new TwitchClient(_credentials);
+                    client = new TwitchClient();
+                    client.Initialize(_credentials);
                     client.OnJoinedChannel += onJoinedChannel;
                     client.OnMessageReceived += onMessageReceived;
                     client.Connect();

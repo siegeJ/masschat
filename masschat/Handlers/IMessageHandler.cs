@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Timers;
 using masschat.Models;
-using TwitchLib.Models.Client;
+using TwitchLib.Client.Models;
 
 namespace masschat.Handlers
 {
