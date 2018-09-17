@@ -1,5 +1,5 @@
-# masschat
-#### Masschat allows you to filter the chat of the top ~300 channels.
+# masschat <img src="https://img.shields.io/badge/.NETCore-2.0-ff69b4.svg" style="max-height: 300px;">
+#### Masschat allows you to filter the chat of the top ~300 Twitch channels.
 
 ## Creating an `IMessageHandler`
 #### By creating an `IMessageHandler`, every chat message in the channels go through your implemented `Handle()` method.
