@@ -6,6 +6,10 @@ namespace masschat.Enums
     {
         Kappa,
         LUL,
-        PogChamp
+        PogChamp,
+        Kreygasm,
+        MonkaS,
+        DansGame
+
     }
 }
