@@ -19,8 +19,6 @@ namespace masschat.Models
             get => messageCount;
             set
             {
-                //Remove if older than 3 minutes
-                MessageDates.ToList().RemoveAll(m => m < DateTime.UtcNow.AddMinutes(-3));
 
                 MessageDates.Add(DateTime.UtcNow);
                 this.messageCount = value;

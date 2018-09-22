@@ -12,6 +12,16 @@ using TwitchLib.Client.Models;
 namespace masschat.Handlers
 {
 
+    public static class AverageHandlerHelper
+    {
+        public static List<IMessageHandler> Handlers => new List<IMessageHandler>()
+        {
+            new KappaAverageTokensMessageHandler(),
+            new LolAverageTokensMessageHandler(),
+            new PogChampAverageTokensMessageHandler(),
+            new KreygasmTokensMessageHandler()
+        };
+    }
 
     public abstract class AverageTokensMessageHandler : IMessageHandler
     {
@@ -69,6 +79,19 @@ namespace masschat.Handlers
         public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.Kappa;
     }
 
+
+    public class DansGameAverageTokensMessageHandler : AverageTokensMessageHandler
+    {
+        public override IList<Token> Tokens => new List<Token>()
+        {
+            new Token(new ContainsTokenChecker(), "DansGame" ),
+            new Token(new ContainsTokenChecker(), "WutFace" ),
+            new Token(new ContainsTokenChecker(), "WTF" ),
+        };
+
+        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.PogChamp;
+    }
+
     public class PogChampAverageTokensMessageHandler : AverageTokensMessageHandler
     {
         public override IList<Token> Tokens => new List<Token>()
@@ -89,11 +112,34 @@ namespace masschat.Handlers
         {
             new Token(new WordTokenChecker(), "LOL" ),
             new Token(new WordTokenChecker(), "LUL" ),
-            new Token(new ContainsTokenChecker(), "LUL" ),
+            new Token(new ExactlyTokenChecker(), "LUL" ),
+            new Token(new ExactlyTokenChecker(), "LOL" ),
             new Token(new ContainsTokenChecker(), "HAHA" ),
             new Token(new ContainsTokenChecker(), "LMFAO" ),
-            new Token(new WordTokenChecker(), "OMEGALUL" ),
+            new Token(new ContainsTokenChecker(), "OMEGALUL" ),
 
+        };
+
+        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.LUL;
+    }
+
+    public class KreygasmTokensMessageHandler : AverageTokensMessageHandler
+    {
+        public override IList<Token> Tokens => new List<Token>()
+        {
+            new Token(new WordTokenChecker(), "Kreygasm" ),
+            new Token(new ContainsTokenChecker(), "gasm" ),
+        };
+
+        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.LUL;
+    }
+
+    public class MonkaSTokensMessageHandler : AverageTokensMessageHandler
+    {
+        public override IList<Token> Tokens => new List<Token>()
+        {
+            new Token(new WordTokenChecker(), "monkaS" ),
+            new Token(new ContainsTokenChecker(), "gasm" ),
         };
 
         public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.LUL;

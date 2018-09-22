@@ -41,6 +41,12 @@ namespace masschat.Models
 
         public bool Check(string message, string token)
         {
+            if (CaseSensitive)
+            {
+                message = message.ToLower();
+                token = token.ToLower();
+            }
+
             return message.Contains(" " + token + " ") || message.StartsWith(token + " ") || message.EndsWith(" " + token);
         }
 

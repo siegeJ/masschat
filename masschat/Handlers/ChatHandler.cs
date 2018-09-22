@@ -42,7 +42,7 @@ namespace masschat.Handlers
             _credentials = new ConnectionCredentials(nick, password);
             this._channelHandler = channelHandler;
 
-            MessageHandlers = new List<IMessageHandler> { new KappaAverageTokensMessageHandler(), new LolAverageTokensMessageHandler(), new PogChampAverageTokensMessageHandler() };
+            MessageHandlers =  AverageHandlerHelper.Handlers;
             
             if (messageHandlers != null)
                 MessageHandlers.AddRange(messageHandlers);
