@@ -19,7 +19,9 @@ namespace masschat.Handlers
             new KappaAverageTokensMessageHandler(),
             new LolAverageTokensMessageHandler(),
             new PogChampAverageTokensMessageHandler(),
-            new KreygasmTokensMessageHandler()
+            new KreygasmTokensMessageHandler(),
+            new MonkaSTokensMessageHandler(),
+            new DansGameAverageTokensMessageHandler()
         };
     }
 
