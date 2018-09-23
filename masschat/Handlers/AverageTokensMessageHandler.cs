@@ -98,11 +98,12 @@ namespace masschat.Handlers
     {
         public override IList<Token> Tokens => new List<Token>()
         {
-            new Token(new WordTokenChecker(), "PogChamp" ),
-            new Token(new WordTokenChecker(), "Wow" ),
+            new Token(new ContainsTokenChecker(), "PogChamp" ),
+            new Token(new ContainsTokenChecker(), "Wow" ),
             new Token(new ContainsTokenChecker(), "POGGERS" ),
-            new Token(new WordTokenChecker(), "MLG" ),
+            new Token(new ContainsTokenChecker(), "MLG" ),
             new Token(new WordTokenChecker(), "POG" ),
+            new Token(new ExactlyTokenChecker(), "POG" ),
         };
 
         public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.PogChamp;
