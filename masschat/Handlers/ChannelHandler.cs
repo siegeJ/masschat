@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.Timers;
 using TwitchLib;
 using TwitchLib.Api;
-using TwitchLib.Api.Models.Helix.Clips.CreateClip;
-using TwitchLib.Api.Models.v5.Streams;
+using TwitchLib.Api.Helix.Models.Clips.CreateClip;
+using TwitchLib.Api.V5.Models.Streams;
 
 namespace masschat.Handlers
 {
@@ -43,9 +43,9 @@ namespace masschat.Handlers
             api = new TwitchAPI();
             api.Settings.ClientId = clientId;
             api.Settings.AccessToken = accessToken;
-            var livestreams = await api.Streams.v5.GetLiveStreamsAsync(null, null, null, null, 100, 0);
-            var livestreams2 = await api.Streams.v5.GetLiveStreamsAsync(null, null, null, null, 100, 100);
-            var livestreams3 = await api.Streams.v5.GetLiveStreamsAsync(null, null, null, null, 100, 200);
+            var livestreams = await api.V5.Streams.GetLiveStreamsAsync(null, null, null, null, 100, 100);
+            var livestreams2 = await api.V5.Streams.GetLiveStreamsAsync(null, null, null, null, 100, 100);
+            var livestreams3 = await api.V5.Streams.GetLiveStreamsAsync(null, null, null, null, 100, 200);
 
             streams.Clear();
 
@@ -77,7 +77,7 @@ namespace masschat.Handlers
         {
             
             //var authToken = await api.Auth.v5.RefreshAuthTokenAsync()
-            return await api.Clips.helix.CreateClipAsync(channel);
+            return await api.Helix.Clips.CreateClipAsync(channel);
         }
     }
 }
