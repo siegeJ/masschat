@@ -29,12 +29,13 @@ namespace masschat.Handlers
     {
         public abstract IList<Token> Tokens { get; }
 
-        public abstract AverageTokensMessageHandlerName MessageHandlerName { get; }
+        public abstract AverageTokensMessageHandlerName MessageHandlerType { get; }
 
         /// <summary>
         /// Channel with matched messages
         /// </summary>
         public ConcurrentDictionary<string, AverageTokensChannelInfo> Channels { get; set; }
+
 
         protected AverageTokensMessageHandler()
         {
@@ -57,7 +58,7 @@ namespace masschat.Handlers
                         Channels.TryAdd(message.Channel, new AverageTokensChannelInfo()
                         {
                             Channel = message.Channel,
-                            HandlerName = MessageHandlerName,
+                            HandlerName = MessageHandlerType,
                             MessageCount = 1,
                             StartDate = DateTime.UtcNow
                         });
@@ -78,7 +79,7 @@ namespace masschat.Handlers
             new Token(new WordTokenChecker(), "Kappa" )
         };
 
-        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.Kappa;
+        public override AverageTokensMessageHandlerName MessageHandlerType => AverageTokensMessageHandlerName.Kappa;
     }
 
 
@@ -91,7 +92,7 @@ namespace masschat.Handlers
             new Token(new ContainsTokenChecker(), "WTF" ),
         };
 
-        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.DansGame;
+        public override AverageTokensMessageHandlerName MessageHandlerType => AverageTokensMessageHandlerName.DansGame;
     }
 
     public class PogChampAverageTokensMessageHandler : AverageTokensMessageHandler
@@ -106,7 +107,7 @@ namespace masschat.Handlers
             new Token(new ExactlyTokenChecker(), "POG" ),
         };
 
-        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.PogChamp;
+        public override AverageTokensMessageHandlerName MessageHandlerType => AverageTokensMessageHandlerName.PogChamp;
     }
 
     public class LolAverageTokensMessageHandler : AverageTokensMessageHandler
@@ -123,7 +124,7 @@ namespace masschat.Handlers
 
         };
 
-        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.LUL;
+        public override AverageTokensMessageHandlerName MessageHandlerType => AverageTokensMessageHandlerName.LUL;
     }
 
     public class KreygasmTokensMessageHandler : AverageTokensMessageHandler
@@ -134,7 +135,7 @@ namespace masschat.Handlers
             new Token(new ContainsTokenChecker(), "gasm" ),
         };
 
-        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.Kreygasm;
+        public override AverageTokensMessageHandlerName MessageHandlerType => AverageTokensMessageHandlerName.Kreygasm;
     }
 
     public class MonkaSTokensMessageHandler : AverageTokensMessageHandler
@@ -145,6 +146,6 @@ namespace masschat.Handlers
             new Token(new ContainsTokenChecker(), "gasm" ),
         };
 
-        public override AverageTokensMessageHandlerName MessageHandlerName => AverageTokensMessageHandlerName.MonkaS;
+        public override AverageTokensMessageHandlerName MessageHandlerType => AverageTokensMessageHandlerName.MonkaS;
     }
 }

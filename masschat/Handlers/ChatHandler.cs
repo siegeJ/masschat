@@ -37,15 +37,16 @@ namespace masschat.Handlers
         /// <param name="password">irc password</param>
         /// <param name="channelHandler">channel handler that gets channels</param>
         /// <param name="messageHandlers">If not supplied a defualt list of message handlers will be provided</param>
-        public ChatHandler(string nick, string password, IChannelHandler channelHandler, IList<IMessageHandler> messageHandlers = null)
+        public ChatHandler(string nick, string password, IChannelHandler channelHandler, IList<IMessageHandler> messageHandlers)
         {
             _credentials = new ConnectionCredentials(nick, password);
             this._channelHandler = channelHandler;
-
-            MessageHandlers =  AverageHandlerHelper.Handlers;
             
-            if (messageHandlers != null)
-                MessageHandlers.AddRange(messageHandlers);
+            if (messageHandlers == null)
+                throw new ArgumentNullException("messageHandlers");
+
+            MessageHandlers = new List<IMessageHandler>();
+            MessageHandlers.AddRange(messageHandlers);
 
             Start();
 

@@ -43,15 +43,17 @@ namespace masschat.Handlers
             api = new TwitchAPI();
             api.Settings.ClientId = clientId;
             api.Settings.AccessToken = accessToken;
-            var livestreams = await api.V5.Streams.GetLiveStreamsAsync(null, null, null, null, 100, 100);
+            var livestreams = await api.V5.Streams.GetLiveStreamsAsync(null, null, null, null, 100);
             var livestreams2 = await api.V5.Streams.GetLiveStreamsAsync(null, null, null, null, 100, 100);
             var livestreams3 = await api.V5.Streams.GetLiveStreamsAsync(null, null, null, null, 100, 200);
+            var livestreams4 = await api.V5.Streams.GetLiveStreamsAsync(null, null, null, null, 100, 300);
 
             streams.Clear();
 
             var allStreams = livestreams.Streams.ToList();
             allStreams.AddRange(livestreams2.Streams);
             allStreams.AddRange(livestreams3.Streams);
+            allStreams.AddRange(livestreams4.Streams);
 
             foreach (var livestream in allStreams)
             {
@@ -67,8 +69,6 @@ namespace masschat.Handlers
             {
                 await PopulateChannels();
             }
-
-
 
             return streams.ToDictionary(s => s.Key, s=> s.Value);
         }
